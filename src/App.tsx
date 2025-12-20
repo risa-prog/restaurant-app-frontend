@@ -1,35 +1,23 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { Route, Routes } from 'react-router-dom'
 import './App.css'
+import HomePage from './pages/customer/HomePage'
+import OrderCompletePage from './pages/customer/OrderCompletePage';
+import MenusPage from "./pages/admin/MenusPage";
+import MenuManagementPage from "./pages/admin/MenuManagementPage";
+import LoginPage from "./pages/auth/LoginPage";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Routes>
+        <Route path="/" element={<HomePage />}></Route>
+        <Route path="/order-complete" element={<OrderCompletePage />}></Route>
+        <Route path="/menus" element={<MenusPage />}></Route>
+        <Route path="/menus/management" element={<MenuManagementPage />}></Route>
+        <Route path="/login" element={<LoginPage />}></Route>
+      </Routes>
     </>
-  )
+  );
 }
 
 export default App
