@@ -1,6 +1,10 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Button, Flex } from "@chakra-ui/react";
 
-const CustomerHeader = () => {
+interface CustomerHeaderProps { 
+  onOpenCart: () => void;
+}
+
+const CustomerHeader = ({onOpenCart }: CustomerHeaderProps) => {
   return (
     <Flex
       bg="blue.400"
@@ -13,6 +17,7 @@ const CustomerHeader = () => {
       <Box fontWeight="bold" fontSize="xl">
         美食亭
       </Box>
+      <Button onClick={onOpenCart}>カート</Button>
     </Flex>
   );
 };

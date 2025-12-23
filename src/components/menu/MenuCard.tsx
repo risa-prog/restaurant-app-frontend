@@ -38,33 +38,6 @@ const MenuCard = ({ menu }: { menu: MenuType }) => {
           </Box>
         </CardBody>
       </Card>
-      {/* <Card w="250px">
-        <CardBody>
-          <Flex>
-            {menu.image_url && (
-              <Image
-                src={menu.image_url}
-                alt="サンプル画像"
-                boxSize="150px"
-                objectFit="cover"
-                borderRadius="md"
-              />
-            )}
-            <Box>
-              <Text>{menu.name}</Text>
-              <Text>{menu.price}</Text>
-              <Flex align="center" gap={2}>
-                <Button size="sm">+</Button>
-                <Text minW="24px" textAlign="center">
-                  0
-                </Text>
-                <Button size="sm">-</Button>
-              </Flex>
-            </Box>
-          </Flex>
-          <Text>{menu.description}</Text>
-        </CardBody>
-      </Card> */}
     </>
   );
 };

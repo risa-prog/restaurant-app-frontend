@@ -7,14 +7,23 @@ import MenuCard from "../../components/menu/MenuCard";
 import {
   Box,
   Heading,
-  Wrap,
-  Text,
-  Container,
   SimpleGrid,
+  Button,
+  useDisclosure,
+} from "@chakra-ui/react";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 
 const HomePage = () => {
   const [menus, setMenus] = useState<Array<MenuType>>([]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   useEffect(() => {
     const fetchMenus = async () => {
       const menuItems = await getMenus();
@@ -26,7 +35,7 @@ const HomePage = () => {
 
   return (
     <>
-      <CustomerHeader></CustomerHeader>
+      <CustomerHeader onOpenCart={ onOpen}></CustomerHeader>
       <Box maxW="1400px" mx="auto" px={{ base: 4, md: 6 }} py={6}>
         <Heading mb={4}>メニュー一覧</Heading>
         <SimpleGrid
@@ -41,6 +50,23 @@ const HomePage = () => {
             ))}
         </SimpleGrid>
       </Box>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>カート</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              注文する
+            </Button>
+            <Button variant="ghost" onClick={ onClose }>閉じる</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 };
