@@ -1,0 +1,1 @@
+export type CartItemsType = Record<number, { quantity: number }>;

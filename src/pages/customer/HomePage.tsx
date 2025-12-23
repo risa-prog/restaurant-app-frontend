@@ -20,14 +20,26 @@ import {
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/react";
+import { useCartContext } from "../../context/CartContext";
+import type { CartItemsType } from "../../types/cartItem";
 
 const HomePage = () => {
   const [menus, setMenus] = useState<Array<MenuType>>([]);
+  const { cartItems, setCartItems } = useCartContext();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   useEffect(() => {
     const fetchMenus = async () => {
-      const menuItems = await getMenus();
+      const menuItems: Array<MenuType> = await getMenus();
       setMenus(menuItems);
+
+      const initialCartItems = menuItems.reduce((acc, menu) => {
+        acc[menu.id] = { quantity: 0 };
+        return acc;
+      }, {} as CartItemsType);
+
+      setCartItems(initialCartItems);
     };
 
     fetchMenus();
@@ -35,7 +47,7 @@ const HomePage = () => {
 
   return (
     <>
-      <CustomerHeader onOpenCart={ onOpen}></CustomerHeader>
+      <CustomerHeader onOpenCart={onOpen}></CustomerHeader>
       <Box maxW="1400px" mx="auto" px={{ base: 4, md: 6 }} py={6}>
         <Heading mb={4}>メニュー一覧</Heading>
         <SimpleGrid
@@ -55,15 +67,15 @@ const HomePage = () => {
         <ModalContent>
           <ModalHeader>カート</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            
-          </ModalBody>
+          <ModalBody></ModalBody>
 
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={onClose}>
               注文する
             </Button>
-            <Button variant="ghost" onClick={ onClose }>閉じる</Button>
+            <Button variant="ghost" onClick={onClose}>
+              閉じる
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
