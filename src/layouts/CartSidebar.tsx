@@ -1,9 +1,9 @@
 
 const CartSidebar = () => {
   return (
-    <div>
+    <>
       
-    </div>
+    </>
   )
 }
 

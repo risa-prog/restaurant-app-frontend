@@ -5,6 +5,7 @@ const CustomerHeader = () => {
     <Flex
       bg="blue.400"
       color="white"
+      h="64px"
       p={4}
       justify="space-between"
       align="center"
