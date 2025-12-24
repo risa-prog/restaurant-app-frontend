@@ -9,7 +9,10 @@ import {
   Heading,
   SimpleGrid,
   Button,
+  Text,
   useDisclosure,
+  Stack,
+  Flex,
 } from "@chakra-ui/react";
 import {
   Modal,
@@ -25,7 +28,7 @@ import type { CartItemsType } from "../../types/cartItem";
 
 const HomePage = () => {
   const [menus, setMenus] = useState<Array<MenuType>>([]);
-  const { cartItems, setCartItems } = useCartContext();
+  const { cartItems, setCartItems, getTotalPrice } = useCartContext();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -44,6 +47,15 @@ const HomePage = () => {
 
     fetchMenus();
   }, []);
+
+  const cartMenuItems = menus
+    .filter((menu) => (cartItems[menu.id]?.quantity ?? 0) > 0)
+    .map((menu) => ({
+      ...menu,
+      quantity: cartItems[menu.id]?.quantity ?? 0,
+    }));
+  
+  const totalPrice = getTotalPrice(cartMenuItems);
 
   return (
     <>
@@ -67,12 +79,48 @@ const HomePage = () => {
         <ModalContent>
           <ModalHeader>カート</ModalHeader>
           <ModalCloseButton />
-          <ModalBody></ModalBody>
+          <ModalBody>
+            {cartMenuItems.length === 0 ? (
+              <Text textAlign="center" color="gray.500">
+                カートは空です
+              </Text>
+            ) : (
+              <Stack spacing={4}>
+                {cartMenuItems.map((menu) => (
+                  <Flex
+                    key={menu.id}
+                    justify="space-between"
+                    align="center"
+                    borderBottom="1px solid"
+                    borderColor="gray.200"
+                    pb={2}
+                  >
+                    <Box>
+                      <Text fontWeight="bold">{menu.name}</Text>
+                      <Text fontSize="sm" color="gray.600">
+                        ¥{menu.price} × {menu.quantity}
+                      </Text>
+                    </Box>
+                    <Text fontWeight="bold">¥{menu.price * menu.quantity}</Text>
+                  </Flex>
+                ))}
+
+                <Flex justify="space-between" pt={2}>
+                  <Text fontWeight="bold">合計</Text>
+                  <Text fontWeight="bold" fontSize="lg">
+                    ¥{totalPrice}
+                  </Text>
+                </Flex>
+              </Stack>
+            )}
+          </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              注文する
-            </Button>
+            {cartMenuItems.length > 0 && (
+              <Button colorScheme="blue" mr={3}>
+                注文する
+              </Button>
+            )}
             <Button variant="ghost" onClick={onClose}>
               閉じる
             </Button>
