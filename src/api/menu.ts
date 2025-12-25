@@ -1,5 +1,5 @@
 export const getMenus = async () => {
-    const res = await fetch("http://localhost:8080/api/menus");
+    const res = await fetch("/api/menus");
     const json = await res.json();
 
   if (!res.ok) {

@@ -25,6 +25,9 @@ import {
 } from "@chakra-ui/react";
 import { useCartContext } from "../../context/CartContext";
 import type { CartItemsType } from "../../types/cartItem";
+import { createOrder } from "../../api/order";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const HomePage = () => {
   const [menus, setMenus] = useState<Array<MenuType>>([]);
@@ -55,7 +58,41 @@ const HomePage = () => {
       quantity: cartItems[menu.id]?.quantity ?? 0,
     }));
   
-  const totalPrice = getTotalPrice(cartMenuItems);
+  const navigate = useNavigate();
+
+  const handleOrder = async() => { 
+    try {
+      await createOrder({
+        tableNumber: 1,
+        items: cartMenuItems.map((menu) => ({
+          menuId: menu.id,
+          quantity: menu.quantity,
+        })),
+      });
+
+      const resetCartItems = menus.reduce((acc, menu) => {
+        acc[menu.id] = { quantity: 0 };
+        return acc;
+      }, {} as CartItemsType);
+      setCartItems(resetCartItems);
+
+      onClose();
+
+      toast.success("注文が完了しました");
+
+      navigate("/order/complete", { replace: true });
+    } catch (error: any) {
+      if (error.response?.status === 422) {
+        toast.error("入力内容に不備があります");
+      }
+      if (error.response?.status === 404) {
+        toast.error("メニュー情報が更新されています。再読み込みしてください");
+      }
+      if (error.response?.status === 500) {
+        toast.error("サーバーエラーが発生しました。時間を置いて再度お試しください");
+      }
+    }
+  }
 
   return (
     <>
@@ -108,7 +145,7 @@ const HomePage = () => {
                 <Flex justify="space-between" pt={2}>
                   <Text fontWeight="bold">合計</Text>
                   <Text fontWeight="bold" fontSize="lg">
-                    ¥{totalPrice}
+                    ¥{getTotalPrice(cartMenuItems)}
                   </Text>
                 </Flex>
               </Stack>
@@ -117,7 +154,7 @@ const HomePage = () => {
 
           <ModalFooter>
             {cartMenuItems.length > 0 && (
-              <Button colorScheme="blue" mr={3}>
+              <Button onClick={ handleOrder} colorScheme="blue" mr={3}>
                 注文する
               </Button>
             )}
