@@ -1,15 +1,77 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Stack, Text } from "@chakra-ui/react";
 import CustomerHeader from "../../layouts/header/CustomerHeader";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getOrderItems } from "../../api/orderItem";
+import type { OrderItemType } from "../../types/orderItem";
 
 const OrderCompletePage = () => {
+  const { orderId } = useParams<{ orderId: string }>();
+
+  const [orderItems, setOrderItems] = useState<Array<OrderItemType>>([]);
+
+  useEffect(() => {
+    const fetchOrderItems = async () => {
+      if (!orderId) return;
+      const items = await getOrderItems(orderId);
+      setOrderItems(items);
+    };
+    fetchOrderItems();
+  }, [orderId]);
+
+  const navigate = useNavigate();
+
+  const getTotalPrice = (items: OrderItemType[]) => {
+    return items.reduce(
+      (total, item) => total + item.price_at_order * item.quantity,
+      0
+    );
+  };
+
   return (
     <>
-      {/* <CustomerHeader></CustomerHeader> */}
-      <Flex minH="calc(100vh - 64px)" align="center" justify="center">
-        <Box>
-          <Text fontSize="xl" fontWeight="bold">
+      <CustomerHeader></CustomerHeader>
+      <Flex
+        minH="calc(100vh - 80px)"
+        align="center"
+        justify="center"
+        bg="gray.50"
+        px={4}
+      >
+        <Box maxW="600px" w="full" p={6} bg="white" rounded="md" shadow="md">
+          <Text fontSize="2xl" fontWeight="bold" textAlign="center" mb={2}>
             ご注文ありがとうございました！
           </Text>
+          <Text fontSize="lg" textAlign="center" mb={4}>
+            注文番号：#{orderId}
+          </Text>
+          <Stack spacing={2}>
+            {orderItems.map((item) => (
+              <Flex key={item.id} justify="space-between">
+                <Box>
+                  <Text fontWeight="bold">{item.menu.name}</Text>
+                  <Text fontSize="sm" color="gray.600">
+                    ¥{item.price_at_order} × {item.quantity}
+                  </Text>
+                </Box>
+                <Text fontWeight="bold">
+                  ¥{item.price_at_order * item.quantity}
+                </Text>
+              </Flex>
+            ))}
+
+            <Flex justify="space-between" fontWeight="bold" mt={4}>
+              <Text fontWeight="bold">合計</Text>
+              <Text fontWeight="bold" fontSize="lg">
+                ¥{getTotalPrice(orderItems)}
+              </Text>
+            </Flex>
+          </Stack>
+          <Flex mt={6} justify="center">
+            <Button colorScheme="blue" onClick={() => navigate("/")}>
+              Home へ戻る
+            </Button>
+          </Flex>
         </Box>
       </Flex>
     </>

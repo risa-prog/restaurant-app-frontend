@@ -13,7 +13,7 @@ function App() {
       <Toaster position="top-right" />
       <Routes>
         <Route path="/" element={<HomePage />}></Route>
-        <Route path="/order-complete" element={<OrderCompletePage />}></Route>
+        <Route path="/order-complete/:orderId" element={<OrderCompletePage />}></Route>
         <Route path="/menus" element={<MenusPage />}></Route>
         <Route
           path="/menus/management"

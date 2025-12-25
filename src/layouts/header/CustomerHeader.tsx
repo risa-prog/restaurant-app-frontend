@@ -1,7 +1,7 @@
 import { Box, Button, Flex } from "@chakra-ui/react";
 
 interface CustomerHeaderProps { 
-  onOpenCart: () => void;
+  onOpenCart?: () => void;
 }
 
 const CustomerHeader = ({onOpenCart }: CustomerHeaderProps) => {
@@ -17,7 +17,9 @@ const CustomerHeader = ({onOpenCart }: CustomerHeaderProps) => {
       <Box fontWeight="bold" fontSize="xl">
         美食亭
       </Box>
-      <Button onClick={onOpenCart}>カート</Button>
+      {onOpenCart && (
+        <Button onClick={onOpenCart}>カート</Button>
+      )}
     </Flex>
   );
 };

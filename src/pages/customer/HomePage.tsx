@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import { getMenus } from "../../api/menu";
 import type { MenuType } from "../../types/menu";
 import CustomerHeader from "../../layouts/header/CustomerHeader";
@@ -62,7 +61,7 @@ const HomePage = () => {
 
   const handleOrder = async() => { 
     try {
-      await createOrder({
+      const order = await createOrder({
         tableNumber: 1,
         items: cartMenuItems.map((menu) => ({
           menuId: menu.id,
@@ -80,7 +79,7 @@ const HomePage = () => {
 
       toast.success("注文が完了しました");
 
-      navigate("/order/complete", { replace: true });
+      navigate(`/order-complete/${order.order_id}`, { replace: true });
     } catch (error: any) {
       if (error.response?.status === 422) {
         toast.error("入力内容に不備があります");
@@ -140,6 +139,7 @@ const HomePage = () => {
                     </Box>
                     <Text fontWeight="bold">¥{menu.price * menu.quantity}</Text>
                   </Flex>
+
                 ))}
 
                 <Flex justify="space-between" pt={2}>
