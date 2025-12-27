@@ -13,12 +13,14 @@ import { useState } from "react";
 import { login } from "../../api/auth";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const LoginPage = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [emailError, setEmailError] = useState<string>('');
   const [passwordError, setPasswordError] = useState<string>('');
+  const { setIsLoggedIn } = useAuth();
 
   const navigate = useNavigate();
 
@@ -27,6 +29,7 @@ const LoginPage = () => {
     try {
       const loginResult = await login(email, password);
       localStorage.setItem("token", loginResult.token);
+      setIsLoggedIn(true);
       toast.success(loginResult.message);
       navigate('/admin/orders');
     } catch (error: any) { 
