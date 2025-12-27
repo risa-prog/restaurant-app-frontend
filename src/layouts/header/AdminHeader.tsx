@@ -1,13 +1,11 @@
-import { Box, Flex, Link as ChakraLink, Button } from "@chakra-ui/react";
-import { useState } from "react";
+import { Box, Flex, Link as ChakraLink } from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../../api/auth";
 import toast from "react-hot-toast";
+import { useAuth } from "../../context/AuthContext";
 
 const AdminHeader = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
-    !!localStorage.getItem("token")
-  );
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
 
   const navigate = useNavigate();
 

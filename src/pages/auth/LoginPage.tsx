@@ -28,7 +28,7 @@ const LoginPage = () => {
       const loginResult = await login(email, password);
       localStorage.setItem("token", loginResult.token);
       toast.success(loginResult.message);
-      navigate('/menus');
+      navigate('/admin/orders');
     } catch (error: any) { 
       if ('status' in error && error.status === 422) {
         const e = error as { errors: { email?: string[]; password?: string[] } };
