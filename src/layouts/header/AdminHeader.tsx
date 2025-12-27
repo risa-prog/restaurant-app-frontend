@@ -33,11 +33,11 @@ const AdminHeader = () => {
         美食亭
       </Box>
       <Box display="flex" gap={4}>
-        <ChakraLink as={Link} to="/menus" color="white">
-          メニュー一覧
+        <ChakraLink as={Link} to="/admin/orders" color="white">
+          注文一覧
         </ChakraLink>
-        <ChakraLink as={Link} to="/menus/management" color="white">
-          メニュー管理
+        <ChakraLink as={Link} to="/admin/menus" color="white">
+          メニュー一覧
         </ChakraLink>
         {isLoggedIn ? (
           <ChakraLink
