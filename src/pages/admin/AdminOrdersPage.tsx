@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { getOrders, updateOrderStatus } from "../../api/order";
 import type { OrderType } from "../../types/order";
-import { formatDate } from "../../lib/utils";
+import { formatDate, getTotalPrice } from "../../lib/utils";
 import toast from "react-hot-toast";
 
 type OrderStatus = "pending" | "completed";
@@ -55,6 +55,12 @@ const AdminOrdersPage = () => {
       toast.error(error.message);
     }
   }
+
+  const items = orders.flatMap(order => order.items.map(item => ({
+    price_at_order: item.price_at_order,
+    quantity: item.quantity,
+  })));
+  const totalSales = getTotalPrice(items);
 
   return (
     <>
@@ -120,7 +126,7 @@ const AdminOrdersPage = () => {
                     <Td></Td>
                     <Td></Td>
                     <Td></Td>
-                    <Td fontSize="md">¥500</Td>
+                    <Td fontSize="md">{totalSales}</Td>
                   </Tr>
                 </Tfoot>
               </Table>

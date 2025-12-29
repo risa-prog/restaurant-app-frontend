@@ -5,7 +5,7 @@ export interface OrderType {
   table_number: number;
   status: string;
   total_price: number;
-    items: Array<OrderItemType>;
-    created_at: string;
-    updated_at: string;
+  items: Array<OrderItemType>;
+  created_at: string;
+  updated_at: string;
 }

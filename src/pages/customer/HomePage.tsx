@@ -27,10 +27,11 @@ import type { CartItemsType } from "../../types/cartItem";
 import { createOrder } from "../../api/order";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { getTotalPrice } from "../../lib/utils";
 
 const HomePage = () => {
   const [menus, setMenus] = useState<Array<MenuType>>([]);
-  const { cartItems, setCartItems, getTotalPrice } = useCartContext();
+  const { cartItems, setCartItems} = useCartContext();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -55,6 +56,7 @@ const HomePage = () => {
     .map((menu) => ({
       ...menu,
       quantity: cartItems[menu.id]?.quantity ?? 0,
+      price_at_order: menu.price,
     }));
   
   const navigate = useNavigate();

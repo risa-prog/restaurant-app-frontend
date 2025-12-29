@@ -7,3 +7,13 @@ export const formatDate = (date: string) => {
     minute: "2-digit",
   });
 };
+
+interface ItemType { 
+  quantity: number;
+  price_at_order: number;
+}
+
+export const getTotalPrice = (items: Array<ItemType>): number => {
+  const totalPrice = items.reduce((total, item) => total + item.price_at_order * item.quantity, 0);
+  return totalPrice;
+ }

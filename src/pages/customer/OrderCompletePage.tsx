@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getOrderItems } from "../../api/orderItem";
 import type { OrderItemType } from "../../types/orderItem";
+import { getTotalPrice } from "../../lib/utils";
 
 const OrderCompletePage = () => {
   const { orderId } = useParams<{ orderId: string }>();
@@ -20,13 +21,6 @@ const OrderCompletePage = () => {
   }, [orderId]);
 
   const navigate = useNavigate();
-
-  const getTotalPrice = (items: OrderItemType[]) => {
-    return items.reduce(
-      (total, item) => total + item.price_at_order * item.quantity,
-      0
-    );
-  };
 
   return (
     <>
