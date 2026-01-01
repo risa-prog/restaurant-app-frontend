@@ -32,7 +32,33 @@ export const getMenus = async (params?: GetMenusParams) => {
   return json.data;
 };
 
-export const deleteMenu = async (menuId: number) => {
+export const showMenu = async (menuId: string) => { 
+  const res = await fetch(`/api/menus/${menuId}`);
+
+  let json: any = {};
+  try { 
+    json = await res.json();
+  } catch {
+    throw new Error("メニューの取得に失敗しました");
+  };
+
+  if (!res.ok) { 
+    console.error('showMenu', {
+      status: res.status,
+      body: json,
+    });
+
+    if (res.status === 404) { 
+      throw new Error("メニューが見つかりません");
+    }
+
+    throw new Error("メニューの取得に失敗しました");
+  }
+
+  return json.data;
+}
+
+export const deleteMenu = async (menuId: string) => {
   const res = await fetch(`/api/menus/${menuId}`, {
     method: "DELETE",
   });
@@ -40,7 +66,9 @@ export const deleteMenu = async (menuId: number) => {
   let json: any = {};
   try {
     json = await res.json();
-  } catch {}
+  } catch {
+     throw new Error("メニューの削除に失敗しました");
+   };
 
   if (!res.ok) {
     console.error("deleteMenu", {
