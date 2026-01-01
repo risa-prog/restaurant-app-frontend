@@ -10,6 +10,7 @@ import AdminMenuDetailPage from './pages/admin/AdminMenuDetailPage';
 import AdminMenuCreatePage from './pages/admin/AdminMenuCreatePage';
 import AdminMenuEditPage from './pages/admin/AdminMenuEditPage';
 import { useAuth } from './context/AuthContext';
+import RegisterPage from './pages/auth/RegisterPage';
 
 function App() {
   const { isLoggedIn } = useAuth();
@@ -22,7 +23,7 @@ function App() {
         <Route
           path="/order-complete/:orderId"
           element={<OrderCompletePage />}
-         />
+        />
 
         <Route
           path="/admin/orders"
@@ -66,10 +67,21 @@ function App() {
             )
           }
         />
+        {/* <Route
+          path="/register"
+          element={
+            !isLoggedIn ? <RegisterPage /> : <Navigate to="/admin/orders" replace />
+          }
+        /> */}
+        <Route path="/register" element={<RegisterPage />} />
         <Route
           path="/login"
           element={
-            !isLoggedIn ? <LoginPage /> : <Navigate to="/admin/orders" replace />
+            !isLoggedIn ? (
+              <LoginPage />
+            ) : (
+              <Navigate to="/admin/orders" replace />
+            )
           }
         />
       </Routes>
