@@ -37,7 +37,10 @@ const HomePage = () => {
 
   useEffect(() => {
     const fetchMenus = async () => {
-      const menuItems: Array<MenuType> = await getMenus();
+      const menuItems: Array<MenuType> = await getMenus({
+        is_active: true,
+        sort: "created_at_desc",
+      });
       setMenus(menuItems);
 
       const initialCartItems = menuItems.reduce((acc, menu) => {

@@ -126,7 +126,7 @@ const AdminOrdersPage = () => {
                     <Td></Td>
                     <Td></Td>
                     <Td></Td>
-                    <Td fontSize="md">{totalSales}</Td>
+                    <Td fontSize="md">¥{totalSales}</Td>
                   </Tr>
                 </Tfoot>
               </Table>
