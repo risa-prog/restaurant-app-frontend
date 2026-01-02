@@ -14,11 +14,10 @@ import {
   Button,
   HStack,
 } from "@chakra-ui/react";
-import { deleteMenu, getMenus } from "../../api/menu";
+import { getMenus } from "../../api/menu";
 import type { MenuType } from "../../types/menu";
 import { formatDate } from "../../lib/utils";
 import { Link as RouterLink } from "react-router-dom";
-import toast from "react-hot-toast";
 
 const AdminMenusPage = () => {
   const [menus, setMenus] = useState<Array<MenuType>>([]);
@@ -37,21 +36,6 @@ const AdminMenusPage = () => {
     };
     fetchMenus();
   }, []);
-
-  const handleMenuDelete = async (menuId: number) => {
-    try {
-      const result = await deleteMenu(menuId);
-
-      const newMenus = await getMenus({
-        sort: "created_at_desc",
-      });
-      setMenus(newMenus);
-
-      toast.success(result.message);
-    } catch(error: any){
-      toast.error(error.message);
-    }
-  };
 
   return (
     <Flex minH="100vh" bg="gray.50" direction="column">
@@ -106,15 +90,6 @@ const AdminMenusPage = () => {
                             size="sm"
                           >
                             編集
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              handleMenuDelete(menu.id);
-                            }}
-                            size="sm"
-                            colorScheme="red"
-                          >
-                            削除
                           </Button>
                         </HStack>
                       </Td>

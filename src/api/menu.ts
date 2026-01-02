@@ -58,30 +58,3 @@ export const showMenu = async (menuId: string) => {
   return json.data;
 }
 
-export const deleteMenu = async (menuId: string) => {
-  const token = localStorage.getItem('token');
-  const res = await fetch(`/api/menus/${menuId}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  let json: any = {};
-  try {
-    json = await res.json();
-  } catch {
-     throw new Error("メニューの削除に失敗しました");
-   };
-
-  if (!res.ok) {
-    console.error("deleteMenu", {
-      status: res.status,
-      body: json,
-    });
-    throw new Error("メニューの削除に失敗しました");
-  }
-
-  return json;
-};
