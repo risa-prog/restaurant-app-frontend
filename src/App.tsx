@@ -67,13 +67,12 @@ function App() {
             )
           }
         />
-        {/* <Route
+        <Route
           path="/register"
           element={
             !isLoggedIn ? <RegisterPage /> : <Navigate to="/admin/orders" replace />
           }
-        /> */}
-        <Route path="/register" element={<RegisterPage />} />
+        />
         <Route
           path="/login"
           element={

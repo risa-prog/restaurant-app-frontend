@@ -14,6 +14,8 @@ import { login } from "../../api/auth";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { Link as RouterLink } from "react-router-dom";
+import { Link } from "@chakra-ui/react";
 
 const LoginPage = () => {
   const [email, setEmail] = useState<string>('');
@@ -86,6 +88,17 @@ const LoginPage = () => {
               ログイン
             </Button>
           </form>
+          <Text mt={4} textAlign="center" fontSize="sm">
+            アカウントをお持ちでない方は{" "}
+            <Link
+              as={RouterLink}
+              to="/register"
+              color="blue.500"
+              fontWeight="medium"
+            >
+              新規登録
+            </Link>
+          </Text>
         </Card>
       </Flex>
     </>
