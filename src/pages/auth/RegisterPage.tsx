@@ -10,7 +10,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { login, register } from "../../api/auth";
+import { register } from "../../api/auth";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -68,7 +68,7 @@ const RegisterPage = () => {
                     setName(e.target.value);
                   }}
                 />
-                <FormErrorMessage>{emailError}</FormErrorMessage>
+                <FormErrorMessage>{nameError}</FormErrorMessage>
               </FormControl>
             </Box>
             <Box>

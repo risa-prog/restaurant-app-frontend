@@ -21,7 +21,14 @@ export const createOrder = async (data: DataType) => {
 };
 
 export const getOrders = async () => {
-  const res = await fetch("/api/orders");
+  const token = localStorage.getItem("token");
+
+  const res = await fetch("/api/orders", {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   let json: any = {};
   try {
@@ -40,10 +47,13 @@ export const getOrders = async () => {
 };
 
 export const updateOrderStatus = async (orderId: number) => {
+  const token = localStorage.getItem("token");
+  
   const res = await fetch(`/api/orders/${orderId}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ status: "completed" }),
   });

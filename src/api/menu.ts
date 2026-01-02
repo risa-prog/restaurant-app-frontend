@@ -59,8 +59,13 @@ export const showMenu = async (menuId: string) => {
 }
 
 export const deleteMenu = async (menuId: string) => {
+  const token = localStorage.getItem('token');
   const res = await fetch(`/api/menus/${menuId}`, {
     method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   let json: any = {};
