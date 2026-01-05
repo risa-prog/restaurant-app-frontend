@@ -39,7 +39,7 @@ export const register = async (
     } else { 
       throw {
         status: res.status,
-        message: json.message || "通信に失敗しました",
+        message: "新規登録に失敗しました",
       };
     }
   }
@@ -54,7 +54,15 @@ export const login = async (email: string, password: string) => {
     body: JSON.stringify({ email, password }),
   });
 
-  const json = await res.json();
+  let json: any = {};
+  try {
+    json = await res.json();
+  } catch {
+    throw {
+      status: res.status,
+      message: "ログインに失敗しました",
+    };
+  }
 
   if (!res.ok) {
     if (res.status === 422) {
@@ -66,7 +74,7 @@ export const login = async (email: string, password: string) => {
     } else {
       throw {
         status: res.status,
-        message: json.message || "通信に失敗しました",
+        message: "ログインに失敗しました",
       };
     }
   }

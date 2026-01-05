@@ -32,23 +32,23 @@ export const getMenus = async (params?: GetMenusParams) => {
   return json.data;
 };
 
-export const showMenu = async (menuId: string) => { 
+export const showMenu = async (menuId: string) => {
   const res = await fetch(`/api/menus/${menuId}`);
 
   let json: any = {};
-  try { 
+  try {
     json = await res.json();
   } catch {
     throw new Error("メニューの取得に失敗しました");
-  };
+  }
 
-  if (!res.ok) { 
-    console.error('showMenu', {
+  if (!res.ok) {
+    console.error("showMenu", {
       status: res.status,
       body: json,
     });
 
-    if (res.status === 404) { 
+    if (res.status === 404) {
       throw new Error("メニューが見つかりません");
     }
 
@@ -56,5 +56,58 @@ export const showMenu = async (menuId: string) => {
   }
 
   return json.data;
-}
+};
 
+export const createMenu = async (
+  name: string,
+  price: number,
+  isActive: boolean,
+  description?: string
+) => {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch("/api/menus", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      name,
+      price,
+      is_active: isActive,
+      ...(description ? { description } : {}),
+    }),
+  });
+
+  let json: any = {};
+  try {
+    json = await res.json();
+  } catch {
+   throw {
+     status: res.status,
+     message: "メニューの作成に失敗しました",
+   };
+  }
+
+  if (!res.ok) {
+    console.error("createMenu error", {
+      status: res.status,
+      body: json,
+    });
+    if (res.status === 422) {
+      throw {
+        status: 422,
+        message: json.message,
+        errors: json.errors,
+      };
+    } else { 
+      throw {
+        status: res.status,
+        message: "メニューの作成に失敗しました",
+      }
+    }
+  }
+
+  return json;
+};

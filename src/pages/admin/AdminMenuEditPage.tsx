@@ -7,7 +7,7 @@ import {
   FormLabel,
   Input,
   InputGroup,
-  InputLeftElement,
+  InputLeftAddon,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -22,6 +22,7 @@ const AdminMenuEditPage = () => {
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
+  const [isActive, setIsActive] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   const { id: menuId } = useParams<{ id: string }>();
@@ -85,17 +86,12 @@ const AdminMenuEditPage = () => {
               <FormControl isRequired>
                 <FormLabel>価格</FormLabel>
                 <InputGroup>
-                  <InputLeftElement
-                    pointerEvents="none"
-                    color="gray.500"
-                    width="3rem"
-                  >
-                    ¥
-                  </InputLeftElement>
+                  <InputLeftAddon>¥</InputLeftAddon>
                   <Input
                     type="number"
-                    value={price}
-                    onChange={(e) => { setPrice(e.target.value ? Number(e.target.value) : 0) }}
+                    value={price || ""}
+                    onChange={(e) => setPrice(Number(e.target.value))}
+                    placeholder="0"
                   />
                 </InputGroup>
               </FormControl>
@@ -103,7 +99,7 @@ const AdminMenuEditPage = () => {
                 <FormLabel>画像アップロード</FormLabel>
                 <Input type="file" accept="image/*" w="full" />
               </FormControl>
-              <Checkbox isChecked={menu.is_active}>公開中</Checkbox>
+              <Checkbox isChecked={isActive} onChange={(e) => { setIsActive(e.target.checked)} }>公開中</Checkbox>
               <Button rounded="md" colorScheme="blue" mt={4}>
                 メニューを更新する
               </Button>
@@ -111,7 +107,9 @@ const AdminMenuEditPage = () => {
           </Card>
         </Flex>
       ) : (
-        <Text color="red.500" fontWeight="bold" textAlign="center" mt={4}>{errorMessage}</Text>
+        <Text color="red.500" fontWeight="bold" textAlign="center" mt={4}>
+          {errorMessage}
+        </Text>
       )}
     </div>
   );
