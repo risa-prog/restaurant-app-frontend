@@ -26,6 +26,7 @@ const AdminMenuCreatePage = () => {
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
+  const [image, setImage] = useState<File | null>(null);
   const [isActive, setIsActive] = useState(true);
   const [errors, setErrors] = useState<ValidationErrors>({});
 
@@ -34,7 +35,7 @@ const AdminMenuCreatePage = () => {
   const handleCreateMenu = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const result = await createMenu(name, price, isActive, description);
+      const result = await createMenu(name, price, isActive, description, image);
       toast.success(result.message);
 
       navigate('/admin/menus');
@@ -47,6 +48,10 @@ const AdminMenuCreatePage = () => {
           is_active: apiErrors.is_active?.[0] ?? "",
           ...(apiErrors.description
             ? { description: apiErrors.description[0] }
+            : {}
+          ),
+          ...(apiErrors.image
+            ? { image: apiErrors.image[0] }
             : {}
           ),
         }); 
@@ -107,7 +112,16 @@ const AdminMenuCreatePage = () => {
               </FormControl>
               <FormControl>
                 <FormLabel>画像アップロード</FormLabel>
-                <Input type="file" accept="image/*" w="full" />
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] ?? null;
+                    setImage(file);
+                  }}
+                  w="full"
+                />
+                <FormErrorMessage>{errors.image}</FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={!!errors.is_active}>
                 <Checkbox

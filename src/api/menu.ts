@@ -62,22 +62,30 @@ export const createMenu = async (
   name: string,
   price: number,
   isActive: boolean,
-  description?: string
+  description?: string,
+  image?: File | null
 ) => {
   const token = localStorage.getItem("token");
+
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("price", String(price));
+  formData.append("is_active", isActive ? "1" : "0");
+
+  if (description) { 
+    formData.append("description", description);
+  }
+
+  if (image) { 
+    formData.append("image", image);
+  }
 
   const res = await fetch("/api/menus", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({
-      name,
-      price,
-      is_active: isActive,
-      ...(description ? { description } : {}),
-    }),
+    body: formData,
   });
 
   let json: any = {};
