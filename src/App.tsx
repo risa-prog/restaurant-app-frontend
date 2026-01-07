@@ -11,6 +11,7 @@ import AdminMenuCreatePage from './pages/admin/AdminMenuCreatePage';
 import AdminMenuEditPage from './pages/admin/AdminMenuEditPage';
 import { useAuth } from './context/AuthContext';
 import RegisterPage from './pages/auth/RegisterPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
   const { isLoggedIn } = useAuth();
@@ -70,7 +71,11 @@ function App() {
         <Route
           path="/register"
           element={
-            !isLoggedIn ? <RegisterPage /> : <Navigate to="/admin/orders" replace />
+            !isLoggedIn ? (
+              <RegisterPage />
+            ) : (
+              <Navigate to="/admin/orders" replace />
+            )
           }
         />
         <Route
@@ -83,6 +88,7 @@ function App() {
             )
           }
         />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
   );

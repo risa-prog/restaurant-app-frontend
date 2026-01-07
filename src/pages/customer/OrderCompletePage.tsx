@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Stack, Text } from "@chakra-ui/react";
 import CustomerHeader from "../../layouts/header/CustomerHeader";
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getOrderItems } from "../../api/orderItem";
 import type { OrderItemType } from "../../types/orderItem";
@@ -8,19 +8,19 @@ import { getTotalPrice } from "../../lib/utils";
 
 const OrderCompletePage = () => {
   const { orderId } = useParams<{ orderId: string }>();
-
+  
   const [orderItems, setOrderItems] = useState<Array<OrderItemType>>([]);
 
-  useEffect(() => {
-    const fetchOrderItems = async () => {
-      if (!orderId) return;
-      const items = await getOrderItems(orderId);
-      setOrderItems(items);
-    };
-    fetchOrderItems();
-  }, [orderId]);
+   const navigate = useNavigate();
 
-  const navigate = useNavigate();
+  useEffect(() => {
+     const fetchOrderItems = async () => {
+       if (!orderId) return;
+       const items = await getOrderItems(orderId);
+       setOrderItems(items);
+     };
+     fetchOrderItems();
+  }, [orderId]);
 
   return (
     <>
