@@ -12,6 +12,7 @@ import AdminMenuEditPage from './pages/admin/AdminMenuEditPage';
 import { useAuth } from './context/AuthContext';
 import RegisterPage from './pages/auth/RegisterPage';
 import NotFoundPage from './pages/NotFoundPage';
+import ProtectedRoute from './components/routing/ProtectedRoute';
 
 function App() {
   const { isLoggedIn } = useAuth();
@@ -25,49 +26,48 @@ function App() {
           path="/order-complete/:orderId"
           element={<OrderCompletePage />}
         />
-
+        
         <Route
           path="/admin/orders"
           element={
-            isLoggedIn ? <AdminOrdersPage /> : <Navigate to="/login" replace />
+            <ProtectedRoute>
+              <AdminOrdersPage />
+            </ProtectedRoute>
           }
         />
         <Route
           path="/admin/menus"
           element={
-            isLoggedIn ? <AdminMenusPage /> : <Navigate to="/login" replace />
-          }
-        />
-        <Route
-          path="/admin/menus/:id"
-          element={
-            isLoggedIn ? (
-              <AdminMenuDetailPage />
-            ) : (
-              <Navigate to="/login" replace />
-            )
+            <ProtectedRoute>
+              <AdminMenusPage />
+            </ProtectedRoute>
           }
         />
         <Route
           path="/admin/menus/create"
           element={
-            isLoggedIn ? (
+            <ProtectedRoute>
               <AdminMenuCreatePage />
-            ) : (
-              <Navigate to="/login" replace />
-            )
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/menus/:id"
+          element={
+            <ProtectedRoute>
+              <AdminMenuDetailPage />
+            </ProtectedRoute>
           }
         />
         <Route
           path="/admin/menus/:id/edit"
           element={
-            isLoggedIn ? (
+            <ProtectedRoute>
               <AdminMenuEditPage />
-            ) : (
-              <Navigate to="/login" replace />
-            )
+            </ProtectedRoute>
           }
         />
+
         <Route
           path="/register"
           element={
