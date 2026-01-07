@@ -55,12 +55,12 @@ export const showMenu = async (menuId: string) => {
     throw new Error("メニューの取得に失敗しました");
   }
 
-  return json.data;
+  return json;
 };
 
 export const createMenu = async (
   name: string,
-  price: number,
+  price: number | "",
   isActive: boolean,
   description?: string,
   image?: File | null
@@ -72,11 +72,11 @@ export const createMenu = async (
   formData.append("price", String(price));
   formData.append("is_active", isActive ? "1" : "0");
 
-  if (description) { 
+  if (description) {
     formData.append("description", description);
   }
 
-  if (image) { 
+  if (image) {
     formData.append("image", image);
   }
 
@@ -92,10 +92,10 @@ export const createMenu = async (
   try {
     json = await res.json();
   } catch {
-   throw {
-     status: res.status,
-     message: "メニューの作成に失敗しました",
-   };
+    throw {
+      status: res.status,
+      message: "メニューの作成に失敗しました",
+    };
   }
 
   if (!res.ok) {
@@ -105,17 +105,80 @@ export const createMenu = async (
     });
     if (res.status === 422) {
       throw {
-        status: 422,
+        status: res.status,
         message: json.message,
         errors: json.errors,
       };
-    } else { 
+    } else {
       throw {
         status: res.status,
         message: "メニューの作成に失敗しました",
-      }
+      };
     }
   }
 
+  return json;
+};
+
+export const editMenu = async (
+  menuId: string,
+  name: string,
+  price: number | "",
+  isActive: boolean,
+  description?: string,
+  image?: File | null,
+  removeImage?: boolean
+) => {
+  const token = localStorage.getItem("token");
+
+  const formData = new FormData();
+  formData.append("_method", "PATCH");
+  formData.append("name", name);
+  formData.append("price", String(price));
+  formData.append("is_active", isActive ? "1" : "0");
+
+  if (description) {
+    formData.append("description", description);
+  }
+
+  if (image) {
+    formData.append("image", image);
+  }
+
+  formData.append("remove_image", removeImage ? "1" : "0");
+
+  const res = await fetch(`/api/menus/${menuId}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  let json: any = {};
+
+  try {
+    json = await res.json();
+  } catch {
+    throw {
+      status: res.status,
+      message: "メニューの更新に失敗しました",
+    };
+  }
+
+  if (!res.ok) {
+    if (res.status === 422) {
+      throw {
+        status: res.status,
+        message: "入力エラーです",
+        errors: json.errors,
+      };
+    } else {
+      throw {
+        status: res.status,
+        message: "メニューの更新に失敗しました",
+      };
+    }
+  }
   return json;
 };

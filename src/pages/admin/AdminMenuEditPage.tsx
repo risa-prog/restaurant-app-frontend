@@ -4,7 +4,9 @@ import {
   Checkbox,
   Flex,
   FormControl,
+  FormErrorMessage,
   FormLabel,
+  Image,
   Input,
   InputGroup,
   InputLeftAddon,
@@ -12,37 +14,108 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import AdminHeader from "../../layouts/header/AdminHeader";
-import { useEffect, useState } from "react";
-import { showMenu } from "../../api/menu";
-import { useParams } from "react-router-dom";
-import type { MenuType } from "../../types/menu";
+import { useEffect, useRef, useState } from "react";
+import { editMenu, showMenu } from "../../api/menu";
+import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+
+interface ValidationErrorsType {
+  name?: string;
+  description?: string;
+  price?: string;
+  image?: string;
+  isActive?: string;
+}
 
 const AdminMenuEditPage = () => {
-  const [menu, setMenu] = useState<MenuType>({} as MenuType);
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [price, setPrice] = useState<number>(0);
+  const [price, setPrice] = useState<number | "">("");
+  const [image, setImage] = useState<File | null>(null);
   const [isActive, setIsActive] = useState(true);
+
+  const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(null);
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+  const [removeImage, setRemoveImage] = useState(false);
+
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [validationErrors, setValidationErrors] =
+    useState<ValidationErrorsType>({});
 
   const { id: menuId } = useParams<{ id: string }>();
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (!menuId) return;
     const fetchMenu = async () => {
       try {
         const targetMenu = await showMenu(menuId);
+        const menuData = targetMenu.data;
+        console.log("image_url from API:", targetMenu.image_url);
 
-        setMenu(targetMenu);
-        setName(targetMenu.name);
-        setDescription(targetMenu.description);
-        setPrice(targetMenu.price);
+        setName(menuData.name);
+        setDescription(menuData.description);
+        setPrice(menuData.price);
+        setIsActive(menuData.is_active);
+        setCurrentImageUrl(targetMenu.image_url);
       } catch (error: any) {
         setErrorMessage(error.message);
       }
     };
     fetchMenu();
   }, [menuId]);
+
+  const navigate = useNavigate();
+
+  const handleEditMenu = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!menuId) return;
+  
+    try {
+      const result = await editMenu(
+        menuId,
+        name,
+        price,
+        isActive,
+        description,
+        image,
+        removeImage
+      );
+      setValidationErrors({});
+      toast.success(result.message);
+      navigate("/admin/menus");
+    } catch (error: any) {
+      if ("status" in error && error.status === 422) {
+        const apiErrors = error.errors ?? {};
+        setValidationErrors({
+          name: apiErrors.name?.[0] ?? "",
+          price: apiErrors.price?.[0] ?? "",
+          isActive: apiErrors.is_active?.[0] ?? "",
+          ...(apiErrors.description
+            ? { description: apiErrors.description[0] }
+            : {}),
+          ...(apiErrors.image ? { image: apiErrors.image[0] } : {}),
+        });
+        return;
+      }
+      toast.error(error.message);
+    }
+  };
+
+  const handleDeleteImage = async () => {
+    if (currentImageUrl && previewImageUrl) return;
+
+    setPreviewImageUrl(null);
+    setCurrentImageUrl(null);
+    setImage(null);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+
+    setRemoveImage(true);
+  };
 
   return (
     <div>
@@ -60,50 +133,108 @@ const AdminMenuEditPage = () => {
             <Text fontWeight="bold" fontSize="2xl" mb={8}>
               メニュー編集
             </Text>
-            <VStack spacing={6} align="stretch">
-              <FormControl isRequired>
-                <FormLabel>名前</FormLabel>
-                <Input
-                  type="text"
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                  }}
-                  w="full"
-                />
-              </FormControl>
-              <FormControl isRequired>
-                <FormLabel>説明</FormLabel>
-                <Input
-                  type="text"
-                  value={description}
-                  onChange={(e) => {
-                    setDescription(e.target.value);
-                  }}
-                  w="full"
-                />
-              </FormControl>
-              <FormControl isRequired>
-                <FormLabel>価格</FormLabel>
-                <InputGroup>
-                  <InputLeftAddon>¥</InputLeftAddon>
+            <form onSubmit={handleEditMenu} noValidate>
+              <VStack spacing={6} align="stretch">
+                <FormControl isInvalid={!!validationErrors.name}>
+                  <FormLabel>名前</FormLabel>
                   <Input
-                    type="number"
-                    value={price || ""}
-                    onChange={(e) => setPrice(Number(e.target.value))}
-                    placeholder="0"
+                    type="text"
+                    value={name}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                    }}
+                    w="full"
                   />
-                </InputGroup>
-              </FormControl>
-              <FormControl>
-                <FormLabel>画像アップロード</FormLabel>
-                <Input type="file" accept="image/*" w="full" />
-              </FormControl>
-              <Checkbox isChecked={isActive} onChange={(e) => { setIsActive(e.target.checked)} }>公開中</Checkbox>
-              <Button rounded="md" colorScheme="blue" mt={4}>
-                メニューを更新する
-              </Button>
-            </VStack>
+                  <FormErrorMessage>{validationErrors.name}</FormErrorMessage>
+                </FormControl>
+                <FormControl isInvalid={!!validationErrors.description}>
+                  <FormLabel>説明</FormLabel>
+                  <Input
+                    type="text"
+                    value={description ?? ""}
+                    onChange={(e) => {
+                      setDescription(e.target.value);
+                    }}
+                    w="full"
+                  />
+                  <FormErrorMessage>
+                    {validationErrors.description}
+                  </FormErrorMessage>
+                </FormControl>
+                <FormControl isInvalid={!!validationErrors.price}>
+                  <FormLabel>価格</FormLabel>
+                  <InputGroup>
+                    <InputLeftAddon>¥</InputLeftAddon>
+                    <Input
+                      type="number"
+                      value={price}
+                      onChange={(e) => {
+                        const num =
+                          e.target.value === "" ? "" : Number(e.target.value);
+                        setPrice(num);
+                      }}
+                      placeholder="価格"
+                    />
+                  </InputGroup>
+                  <FormErrorMessage>{validationErrors.price}</FormErrorMessage>
+                </FormControl>
+                <FormControl isInvalid={!!validationErrors.image}>
+                  <FormLabel>画像</FormLabel>
+                  {(previewImageUrl || currentImageUrl) && (
+                    <VStack align="start">
+                      <Image
+                        src={previewImageUrl ?? currentImageUrl!}
+                        boxSize="200px"
+                        objectFit="cover"
+                        borderRadius="md"
+                      />
+
+                      <Button
+                        size="sm"
+                        colorScheme="red"
+                        variant="outline"
+                        onClick={handleDeleteImage}
+                      >
+                        画像を削除
+                      </Button>
+                    </VStack>
+                  )}
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    ref={fileInputRef}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] ?? null;
+                      setImage(file);
+
+                      if (file) {
+                        setPreviewImageUrl(URL.createObjectURL(file));
+                      }
+                    }}
+                    w="full"
+                    mt={2}
+                  />
+                  <FormErrorMessage>{validationErrors.image}</FormErrorMessage>
+                </FormControl>
+                <FormControl isInvalid={!!validationErrors.isActive}>
+                  <Checkbox
+                    isChecked={isActive}
+                    onChange={(e) => {
+                      setIsActive(e.target.checked);
+                    }}
+                  >
+                    公開中
+                  </Checkbox>
+                  <FormErrorMessage>
+                    {validationErrors.isActive}
+                  </FormErrorMessage>
+                </FormControl>
+
+                <Button type="submit" rounded="md" colorScheme="blue" mt={4}>
+                  メニューを更新する
+                </Button>
+              </VStack>
+            </form>
           </Card>
         </Flex>
       ) : (

@@ -18,47 +18,54 @@ import { createMenu } from "../../api/menu";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
-interface ValidationErrors { 
-  [key: string]: string;
+interface ValidationErrorsType {
+  name?: string;
+  description?: string;
+  price?: string;
+  image?: string;
+  isActive?: string;
 }
 
 const AdminMenuCreatePage = () => {
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [price, setPrice] = useState<number>(0);
+  const [price, setPrice] = useState<number | "">("");
   const [image, setImage] = useState<File | null>(null);
   const [isActive, setIsActive] = useState(true);
-  const [errors, setErrors] = useState<ValidationErrors>({});
+  const [errors, setErrors] = useState<ValidationErrorsType>({});
 
   const navigate = useNavigate();
 
   const handleCreateMenu = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const result = await createMenu(name, price, isActive, description, image);
+      const result = await createMenu(
+        name,
+        price,
+        isActive,
+        description,
+        image
+      );
+      setErrors({});
       toast.success(result.message);
 
-      navigate('/admin/menus');
+      navigate("/admin/menus");
     } catch (error: any) {
       if ("status" in error && error.status === 422) {
         const apiErrors = error.errors ?? {};
         setErrors({
           name: apiErrors.name?.[0] ?? "",
           price: apiErrors.price?.[0] ?? "",
-          is_active: apiErrors.is_active?.[0] ?? "",
+          isActive: apiErrors.is_active?.[0] ?? "",
           ...(apiErrors.description
             ? { description: apiErrors.description[0] }
-            : {}
-          ),
-          ...(apiErrors.image
-            ? { image: apiErrors.image[0] }
-            : {}
-          ),
-        }); 
+            : {}),
+          ...(apiErrors.image ? { image: apiErrors.image[0] } : {}),
+        });
         return;
       }
       toast.error(error.message);
-     }
+    }
   };
 
   return (
@@ -103,14 +110,17 @@ const AdminMenuCreatePage = () => {
                   <InputLeftAddon>¥</InputLeftAddon>
                   <Input
                     type="number"
-                    value={price || ""}
-                    onChange={(e) => setPrice(Number(e.target.value))}
-                    placeholder="0"
+                    value={price}
+                    onChange={(e) => {
+                      const num = e.target.value === "" ? "" : Number(e.target.value);
+                      setPrice(num);
+                    }}
+                    placeholder="価格"
                   />
                 </InputGroup>
                 <FormErrorMessage>{errors.price}</FormErrorMessage>
               </FormControl>
-              <FormControl>
+              <FormControl isInvalid={!!errors.image}>
                 <FormLabel>画像アップロード</FormLabel>
                 <Input
                   type="file"
@@ -123,14 +133,14 @@ const AdminMenuCreatePage = () => {
                 />
                 <FormErrorMessage>{errors.image}</FormErrorMessage>
               </FormControl>
-              <FormControl isInvalid={!!errors.is_active}>
+              <FormControl isInvalid={!!errors.isActive}>
                 <Checkbox
                   isChecked={isActive}
                   onChange={(e) => setIsActive(e.target.checked)}
                 >
                   公開中
                 </Checkbox>
-                <FormErrorMessage>{errors.is_active}</FormErrorMessage>
+                <FormErrorMessage>{errors.isActive}</FormErrorMessage>
               </FormControl>
               <Button type="submit" rounded="md" colorScheme="blue" mt={4}>
                 メニューを作成する
