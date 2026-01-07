@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import AdminHeader from "../../layouts/header/AdminHeader";
 import {
   Button,
@@ -8,6 +8,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Image,
   Input,
   InputGroup,
   InputLeftAddon,
@@ -33,6 +34,8 @@ const AdminMenuCreatePage = () => {
   const [image, setImage] = useState<File | null>(null);
   const [isActive, setIsActive] = useState(true);
   const [errors, setErrors] = useState<ValidationErrorsType>({});
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const navigate = useNavigate();
 
@@ -65,6 +68,15 @@ const AdminMenuCreatePage = () => {
         return;
       }
       toast.error(error.message);
+    }
+  };
+
+  const handleDeleteImage = async () => {
+    setPreviewImageUrl(null);
+    setImage(null);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -112,7 +124,8 @@ const AdminMenuCreatePage = () => {
                     type="number"
                     value={price}
                     onChange={(e) => {
-                      const num = e.target.value === "" ? "" : Number(e.target.value);
+                      const num =
+                        e.target.value === "" ? "" : Number(e.target.value);
                       setPrice(num);
                     }}
                     placeholder="価格"
@@ -121,15 +134,40 @@ const AdminMenuCreatePage = () => {
                 <FormErrorMessage>{errors.price}</FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={!!errors.image}>
-                <FormLabel>画像アップロード</FormLabel>
+                <FormLabel>画像</FormLabel>
+                {previewImageUrl && (
+                  <VStack align="start">
+                    <Image
+                      src={previewImageUrl}
+                      boxSize="200px"
+                      objectFit="cover"
+                      borderRadius="md"
+                    />
+
+                    <Button
+                      size="sm"
+                      colorScheme="red"
+                      variant="outline"
+                      onClick={handleDeleteImage}
+                    >
+                      画像を削除
+                    </Button>
+                  </VStack>
+                )}
                 <Input
                   type="file"
                   accept="image/*"
+                  ref={fileInputRef}
                   onChange={(e) => {
                     const file = e.target.files?.[0] ?? null;
                     setImage(file);
+
+                    if (file) {
+                      setPreviewImageUrl(URL.createObjectURL(file));
+                    }
                   }}
                   w="full"
+                  mt={2}
                 />
                 <FormErrorMessage>{errors.image}</FormErrorMessage>
               </FormControl>
