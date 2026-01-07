@@ -28,7 +28,7 @@ const MenuCard = ({ menu }: { menu: MenuType }) => {
     <>
       <Card width="250px">
         <CardBody>
-          <Image
+          {/* <Image
             src="https://picsum.photos/200/200"
             alt={menu.name}
             h="140px"
@@ -36,9 +36,9 @@ const MenuCard = ({ menu }: { menu: MenuType }) => {
             objectFit="cover"
             mb={2}
             borderRadius="md"
-          />
+          /> */}
 
-          {/* {menu.image_url && (
+          {menu.image_url && (
             <Image
               src={menu.image_url}
               alt={menu.name}
@@ -48,7 +48,7 @@ const MenuCard = ({ menu }: { menu: MenuType }) => {
               mb={2}
               borderRadius="md"
             />
-          )} */}
+          )}
 
           <Text fontWeight="bold">{menu.name}</Text>
           <Text>¥{menu.price}</Text>

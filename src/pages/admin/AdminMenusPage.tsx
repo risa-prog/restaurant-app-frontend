@@ -79,7 +79,7 @@ const AdminMenusPage = () => {
                   {menus.map((menu) => (
                     <Tr key={menu.id} _last={{ td: { borderBottom: "none" } }}>
                       <Td>{menu.name}</Td>
-                      <Td>{menu.price}</Td>
+                      <Td>¥{menu.price}</Td>
                       <Td>{menu.is_active ? "公開" : "非公開"}</Td>
                       <Td>{formatDate(menu.created_at)}</Td>
                       <Td>
