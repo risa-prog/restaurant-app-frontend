@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { getOrderItems } from "../../api/orderItem";
 import type { OrderItemType } from "../../types/orderItem";
 import { getTotalPrice } from "../../lib/utils";
+import toast from "react-hot-toast";
 
 const OrderCompletePage = () => {
   const { orderId } = useParams<{ orderId: string }>();
@@ -16,8 +17,15 @@ const OrderCompletePage = () => {
   useEffect(() => {
      const fetchOrderItems = async () => {
        if (!orderId) return;
-       const items = await getOrderItems(orderId);
-       setOrderItems(items);
+
+       try { 
+         const items = await getOrderItems(orderId);
+         setOrderItems(items);
+       } catch (error: any) { 
+         navigate("/");
+         toast.error(error.message);
+       }
+       
      };
      fetchOrderItems();
   }, [orderId]);
