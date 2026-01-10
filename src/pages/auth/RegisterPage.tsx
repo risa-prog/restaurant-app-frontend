@@ -46,10 +46,11 @@ const RegisterPage = () => {
         setEmailError(e.errors.email?.[0] || "");
             setPasswordError(e.errors.password?.[0] || "");
       }
-      console.error(error);
-      toast.error(error.message || "通信に失敗しました");
+      
+      toast.error(error.message);
     }
   };
+  
   return (
     <>
       <Flex minH="100vh" justify="center" align="center" bg="gray.50">

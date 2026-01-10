@@ -96,11 +96,11 @@ export const logout = async () => {
   try {
     json = await res.json();
   } catch {
-    throw new Error("サーバーからのレスポンスが不正です");
+    throw new Error("ログアウトに失敗しました");
   }
 
   if (!res.ok) {
-    throw new Error(json.message || "ログアウトに失敗しました");
+    throw new Error("ログアウトに失敗しました");
   }
 
   localStorage.removeItem("token");

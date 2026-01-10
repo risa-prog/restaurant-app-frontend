@@ -16,8 +16,7 @@ const AdminHeader = () => {
       setIsLoggedIn(false);
       navigate('/login');
     } catch (error: any) {
-      console.error(error);
-      toast.error(error.message || "ログアウトに失敗しました");
+      toast.error(error.message);
     }
   };
 
