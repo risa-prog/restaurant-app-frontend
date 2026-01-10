@@ -12,12 +12,18 @@ export const createOrder = async (data: DataType) => {
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.message || "注文作成に失敗しました");
+  let json: any = {};
+  try {
+    json = await res.json();
+  } catch {
+    throw new Error("注文データの作成に失敗しました");
   }
 
-  return res.json();
+  if (!res.ok) {
+    throw new Error("注文作成に失敗しました");
+  }
+
+  return json;
 };
 
 export const getOrders = async () => {
@@ -33,17 +39,14 @@ export const getOrders = async () => {
   let json: any = {};
   try {
     json = await res.json();
-  } catch { };
+  } catch { 
+    throw new Error("注文データの取得に失敗しました");
+  };
 
   if (!res.ok) {
-    console.error("getOrders error", {
-      status: res.status,
-      body: json,
-    });
-
-    throw new Error("通信に失敗しました");
+    throw new Error("注文データの取得に失敗しました");
   }
-  return json.data ?? [];
+  return json.data;
 };
 
 export const updateOrderStatus = async (orderId: number) => {
@@ -61,13 +64,11 @@ export const updateOrderStatus = async (orderId: number) => {
   let json: any = {};
   try {
     json = await res.json();
-  } catch { };
+  } catch { 
+    throw new Error("ステータスの更新に失敗しました");
+  };
   
   if (!res.ok) { 
-    console.error('updateOrderStatus error', {
-      status: res.status,
-      body: json,
-    });
     throw new Error('ステータスの更新に失敗しました');
   }
 

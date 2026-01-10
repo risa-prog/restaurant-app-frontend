@@ -31,26 +31,30 @@ import { getTotalPrice } from "../../lib/utils";
 
 const HomePage = () => {
   const [menus, setMenus] = useState<Array<MenuType>>([]);
-  const { cartItems, setCartItems} = useCartContext();
+  const { cartItems, setCartItems } = useCartContext();
+  const [error, setError] = useState<string | null>(null);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     const fetchMenus = async () => {
-      const menuItems: Array<MenuType> = await getMenus({
-        is_active: true,
-        sort: "created_at_desc",
-      });
-      setMenus(menuItems);
+      try {
+        const menuItems: Array<MenuType> = await getMenus({
+          is_active: true,
+          sort: "created_at_desc",
+        });
+        setMenus(menuItems);
 
-      const initialCartItems = menuItems.reduce((acc, menu) => {
-        acc[menu.id] = { quantity: 0 };
-        return acc;
-      }, {} as CartItemsType);
+        const initialCartItems = menuItems.reduce((acc, menu) => {
+          acc[menu.id] = { quantity: 0 };
+          return acc;
+        }, {} as CartItemsType);
 
-      setCartItems(initialCartItems);
+        setCartItems(initialCartItems);
+      } catch (error: any) {
+        setError(error.message);
+      }
     };
-
     fetchMenus();
   }, []);
 
@@ -61,10 +65,10 @@ const HomePage = () => {
       quantity: cartItems[menu.id]?.quantity ?? 0,
       price_at_order: menu.price,
     }));
-  
+
   const navigate = useNavigate();
 
-  const handleOrder = async() => { 
+  const handleOrder = async () => {
     try {
       const order = await createOrder({
         tableNumber: 1,
@@ -86,89 +90,90 @@ const HomePage = () => {
 
       navigate(`/order-complete/${order.order_id}`, { replace: true });
     } catch (error: any) {
-      if (error.response?.status === 422) {
-        toast.error("入力内容に不備があります");
-      }
-      if (error.response?.status === 404) {
-        toast.error("メニュー情報が更新されています。再読み込みしてください");
-      }
-      if (error.response?.status === 500) {
-        toast.error("サーバーエラーが発生しました。時間を置いて再度お試しください");
-      }
+      toast.error(error.message);
     }
-  }
+  };
 
   return (
     <>
       <CustomerHeader onOpenCart={onOpen}></CustomerHeader>
-      <Box maxW="1400px" mx="auto" px={{ base: 4, md: 6 }} py={6}>
-        <Heading mb={4}>メニュー一覧</Heading>
-        <SimpleGrid
-          columns={{ base: 1, sm: 2, md: 3, lg: 4 }}
-          spacing={4}
-          justifyItems="center"
-        >
-          {menus
-            .filter((menu) => menu.is_active)
-            .map((menu) => (
-              <MenuCard key={menu.id} menu={menu} />
-            ))}
-        </SimpleGrid>
-      </Box>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>カート</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {cartMenuItems.length === 0 ? (
-              <Text textAlign="center" color="gray.500">
-                カートは空です
-              </Text>
-            ) : (
-              <Stack spacing={4}>
-                {cartMenuItems.map((menu) => (
-                  <Flex
-                    key={menu.id}
-                    justify="space-between"
-                    align="center"
-                    borderBottom="1px solid"
-                    borderColor="gray.200"
-                    pb={2}
-                  >
-                    <Box>
-                      <Text fontWeight="bold">{menu.name}</Text>
-                      <Text fontSize="sm" color="gray.600">
-                        ¥{menu.price} × {menu.quantity}
-                      </Text>
-                    </Box>
-                    <Text fontWeight="bold">¥{menu.price * menu.quantity}</Text>
-                  </Flex>
-
+      {!error ? (
+        <>
+          <Box maxW="1400px" mx="auto" px={{ base: 4, md: 6 }} py={6}>
+            <Heading mb={4}>メニュー一覧</Heading>
+            <SimpleGrid
+              columns={{ base: 1, sm: 2, md: 3, lg: 4 }}
+              spacing={4}
+              justifyItems="center"
+            >
+              {menus
+                .filter((menu) => menu.is_active)
+                .map((menu) => (
+                  <MenuCard key={menu.id} menu={menu} />
                 ))}
-
-                <Flex justify="space-between" pt={2}>
-                  <Text fontWeight="bold">合計</Text>
-                  <Text fontWeight="bold" fontSize="lg">
-                    ¥{getTotalPrice(cartMenuItems)}
+            </SimpleGrid>
+          </Box>
+          <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>カート</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                {cartMenuItems.length === 0 ? (
+                  <Text textAlign="center" color="gray.500">
+                    カートは空です
                   </Text>
-                </Flex>
-              </Stack>
-            )}
-          </ModalBody>
+                ) : (
+                  <Stack spacing={4}>
+                    {cartMenuItems.map((menu) => (
+                      <Flex
+                        key={menu.id}
+                        justify="space-between"
+                        align="center"
+                        borderBottom="1px solid"
+                        borderColor="gray.200"
+                        pb={2}
+                      >
+                        <Box>
+                          <Text fontWeight="bold">{menu.name}</Text>
+                          <Text fontSize="sm" color="gray.600">
+                            ¥{menu.price} × {menu.quantity}
+                          </Text>
+                        </Box>
+                        <Text fontWeight="bold">
+                          ¥{menu.price * menu.quantity}
+                        </Text>
+                      </Flex>
+                    ))}
 
-          <ModalFooter>
-            {cartMenuItems.length > 0 && (
-              <Button onClick={ handleOrder} colorScheme="blue" mr={3}>
-                注文する
-              </Button>
-            )}
-            <Button variant="ghost" onClick={onClose}>
-              閉じる
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+                    <Flex justify="space-between" pt={2}>
+                      <Text fontWeight="bold">合計</Text>
+                      <Text fontWeight="bold" fontSize="lg">
+                        ¥{getTotalPrice(cartMenuItems)}
+                      </Text>
+                    </Flex>
+                  </Stack>
+                )}
+              </ModalBody>
+
+              <ModalFooter>
+                {cartMenuItems.length > 0 && (
+                  <Button onClick={handleOrder} colorScheme="blue" mr={3}>
+                    注文する
+                  </Button>
+                )}
+                <Button variant="ghost" onClick={onClose}>
+                  閉じる
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        </>
+      ) : (
+        <Flex justify="center" mt={10}>
+          <Text color="red.500">{error}</Text>
+        </Flex>
+      )}
     </>
   );
 };
