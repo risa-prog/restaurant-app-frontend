@@ -52,8 +52,7 @@ const AdminMenuEditPage = () => {
       try {
         const targetMenu = await showMenu(menuId);
         const menuData = targetMenu.data;
-        console.log("image_url from API:", targetMenu.image_url);
-
+        
         setName(menuData.name);
         setDescription(menuData.description);
         setPrice(menuData.price);

@@ -19,13 +19,11 @@ export const getMenus = async (params?: GetMenusParams) => {
   let json: any = {};
   try {
     json = await res.json();
-  } catch {}
+  } catch {
+    throw new Error("メニューの取得に失敗しました");
+  };
 
   if (!res.ok) {
-    console.error("getMenus error", {
-      status: res.status,
-      body: json,
-    });
     throw new Error("メニューの取得に失敗しました");
   }
 
@@ -43,15 +41,6 @@ export const showMenu = async (menuId: string) => {
   }
 
   if (!res.ok) {
-    console.error("showMenu", {
-      status: res.status,
-      body: json,
-    });
-
-    if (res.status === 404) {
-      throw new Error("メニューが見つかりません");
-    }
-
     throw new Error("メニューの取得に失敗しました");
   }
 
