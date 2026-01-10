@@ -134,7 +134,7 @@ const AdminMenuEditPage = () => {
             </Text>
             <form onSubmit={handleEditMenu} noValidate>
               <VStack spacing={6} align="stretch">
-                <FormControl isInvalid={!!validationErrors.name}>
+                <FormControl isInvalid={!!validationErrors.name} isRequired>
                   <FormLabel>名前</FormLabel>
                   <Input
                     type="text"
@@ -160,7 +160,7 @@ const AdminMenuEditPage = () => {
                     {validationErrors.description}
                   </FormErrorMessage>
                 </FormControl>
-                <FormControl isInvalid={!!validationErrors.price}>
+                <FormControl isInvalid={!!validationErrors.price} isRequired>
                   <FormLabel>価格</FormLabel>
                   <InputGroup>
                     <InputLeftAddon>¥</InputLeftAddon>

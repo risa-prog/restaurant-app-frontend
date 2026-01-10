@@ -6,7 +6,6 @@ import LoginPage from "./pages/auth/LoginPage";
 import { Toaster } from "react-hot-toast";
 import AdminOrdersPage from './pages/admin/AdminOrdersPage';
 import AdminMenusPage from './pages/admin/AdminMenusPage';
-import AdminMenuDetailPage from './pages/admin/AdminMenuDetailPage';
 import AdminMenuCreatePage from './pages/admin/AdminMenuCreatePage';
 import AdminMenuEditPage from './pages/admin/AdminMenuEditPage';
 import { useAuth } from './context/AuthContext';
@@ -48,14 +47,6 @@ function App() {
           element={
             <ProtectedRoute>
               <AdminMenuCreatePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/menus/:id"
-          element={
-            <ProtectedRoute>
-              <AdminMenuDetailPage />
             </ProtectedRoute>
           }
         />

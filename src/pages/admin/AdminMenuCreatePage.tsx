@@ -90,7 +90,7 @@ const AdminMenuCreatePage = () => {
           </Text>
           <form onSubmit={handleCreateMenu} noValidate>
             <VStack spacing={6} align="stretch">
-              <FormControl isInvalid={!!errors.name}>
+              <FormControl isInvalid={!!errors.name} isRequired>
                 <FormLabel>名前</FormLabel>
                 <Input
                   type="text"
@@ -116,7 +116,7 @@ const AdminMenuCreatePage = () => {
                 />
                 <FormErrorMessage>{errors.description}</FormErrorMessage>
               </FormControl>
-              <FormControl isInvalid={!!errors.price}>
+              <FormControl isInvalid={!!errors.price} isRequired>
                 <FormLabel>価格</FormLabel>
                 <InputGroup>
                   <InputLeftAddon>¥</InputLeftAddon>
