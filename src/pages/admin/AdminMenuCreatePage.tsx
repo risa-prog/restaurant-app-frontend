@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import AdminHeader from "../../layouts/header/AdminHeader";
 import {
+  Box,
   Button,
   Card,
   Checkbox,
@@ -137,38 +138,44 @@ const AdminMenuCreatePage = () => {
                 <FormLabel>画像</FormLabel>
                 {previewImageUrl && (
                   <VStack align="start">
-                    <Image
-                      src={previewImageUrl}
-                      boxSize="200px"
-                      objectFit="cover"
-                      borderRadius="md"
-                    />
-
-                    <Button
-                      size="sm"
-                      colorScheme="red"
-                      variant="outline"
-                      onClick={handleDeleteImage}
-                    >
-                      画像を削除
-                    </Button>
+                    <Box position="relative" w="200px">
+                      <Image
+                        src={previewImageUrl}
+                        boxSize="200px"
+                        objectFit="cover"
+                        borderRadius="md"
+                        shadow="sm"
+                      />
+                      <Button
+                        size="xs"
+                        bg="blackAlpha.600"
+                        color="white"
+                        _hover={{ bg: "blackAlpha.700" }}
+                        position="absolute"
+                        top="2"
+                        right="2"
+                        onClick={handleDeleteImage}
+                        borderRadius="full"
+                      >
+                        ✕
+                      </Button>
+                    </Box>
                   </VStack>
                 )}
-                <Input
-                  type="file"
-                  accept="image/*"
-                  ref={fileInputRef}
-                  onChange={(e) => {
-                    const file = e.target.files?.[0] ?? null;
-                    setImage(file);
-
-                    if (file) {
-                      setPreviewImageUrl(URL.createObjectURL(file));
-                    }
-                  }}
-                  w="full"
-                  mt={2}
-                />
+                <Button as="label" cursor="pointer" mt={2}>
+                  画像を選択
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    ref={fileInputRef}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] ?? null;
+                      setImage(file);
+                      if (file) setPreviewImageUrl(URL.createObjectURL(file));
+                    }}
+                    hidden
+                  />
+                </Button>
                 <FormErrorMessage>{errors.image}</FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={!!errors.isActive}>
