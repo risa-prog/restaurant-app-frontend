@@ -1,4 +1,6 @@
 import { Box, Button, Flex } from "@chakra-ui/react";
+import { FiShoppingCart } from "react-icons/fi";
+
 
 interface CustomerHeaderProps { 
   onOpenCart?: () => void;
@@ -17,9 +19,16 @@ const CustomerHeader = ({onOpenCart }: CustomerHeaderProps) => {
       <Box fontWeight="bold" fontSize="xl">
         美食亭
       </Box>
-      {onOpenCart && (
-        <Button onClick={onOpenCart}>カート</Button>
-      )}
+      <Button
+        leftIcon={<FiShoppingCart />}
+        variant="ghost"
+        color="white" 
+        _hover={{ bg: "blue.500" }} 
+        onClick={onOpenCart}
+        size="lg"
+      >
+        カート
+      </Button>
     </Flex>
   );
 };
