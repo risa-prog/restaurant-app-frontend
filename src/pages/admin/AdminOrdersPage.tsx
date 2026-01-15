@@ -92,7 +92,7 @@ const AdminOrdersPage = () => {
                       <Td>{order.table_number}</Td>
                       <Td>
                         {order.items.map((item) => (
-                          <Text key={item.id}>
+                          <Text key={item.id} fontSize="sm">
                             {item.menu.name} × {item.quantity}
                           </Text>
                         ))}
