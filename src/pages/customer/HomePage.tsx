@@ -1,3 +1,4 @@
+import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getMenus } from "../../api/menu";
 import type { MenuType } from "../../types/menu";
@@ -30,6 +31,17 @@ import toast from "react-hot-toast";
 import { getTotalPrice } from "../../lib/utils";
 
 const HomePage = () => {
+  const navigate = useNavigate();
+
+  const [searchParams] = useSearchParams();
+  const tableParam = searchParams.get("table");
+  const tableNumber = tableParam ? Number(tableParam) : null;
+  useEffect(() => {
+    if (!tableNumber || !Number.isInteger(tableNumber) || tableNumber <= 0) {
+      navigate("/select-table", { replace: true });
+    }
+  }, [tableNumber, navigate]);
+
   const [menus, setMenus] = useState<Array<MenuType>>([]);
   const { cartItems, setCartItems } = useCartContext();
   const [error, setError] = useState<string | null>(null);
@@ -66,12 +78,11 @@ const HomePage = () => {
       price_at_order: menu.price,
     }));
 
-  const navigate = useNavigate();
-
   const handleOrder = async () => {
+    if (!tableNumber) return;
     try {
       const order = await createOrder({
-        tableNumber: 1,
+        tableNumber: tableNumber,
         items: cartMenuItems.map((menu) => ({
           menuId: menu.id,
           quantity: menu.quantity,
@@ -86,9 +97,11 @@ const HomePage = () => {
 
       onClose();
 
-      toast.success("注文が完了しました");
+      toast.success(order.message ?? "注文が完了しました");
 
-      navigate(`/order-complete/${order.order_id}`, { replace: true });
+      navigate(`/order-complete/${order.order_id}?table=${tableNumber}`, {
+        replace: true,
+      });
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -101,6 +114,9 @@ const HomePage = () => {
         <>
           <Box maxW="1400px" mx="auto" px={{ base: 4, md: 6 }} py={6}>
             <Heading mb={4}>メニュー一覧</Heading>
+            <Text fontSize="sm" color="gray.500" mb={4}>
+              テーブル番号：{tableNumber}
+            </Text>
             <SimpleGrid
               columns={{ base: 1, sm: 2, md: 3, lg: 4 }}
               spacing={4}

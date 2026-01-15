@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Stack, Text } from "@chakra-ui/react";
 import CustomerHeader from "../../layouts/header/CustomerHeader";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getOrderItems } from "../../api/orderItem";
 import type { OrderItemType } from "../../types/orderItem";
@@ -9,25 +9,32 @@ import toast from "react-hot-toast";
 
 const OrderCompletePage = () => {
   const { orderId } = useParams<{ orderId: string }>();
-  
+  const [searchParams] = useSearchParams();
+  const tableParam = searchParams.get("table");
+  const parsedTableNumber = Number(tableParam);
+
+  const tableNumber =
+    tableParam && Number.isInteger(parsedTableNumber) && parsedTableNumber > 0
+      ? parsedTableNumber
+      : null;
+
   const [orderItems, setOrderItems] = useState<Array<OrderItemType>>([]);
 
-   const navigate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
-     const fetchOrderItems = async () => {
-       if (!orderId) return;
+    const fetchOrderItems = async () => {
+      if (!orderId) return;
 
-       try { 
-         const items = await getOrderItems(orderId);
-         setOrderItems(items);
-       } catch (error: any) { 
-         navigate("/");
-         toast.error(error.message);
-       }
-       
-     };
-     fetchOrderItems();
+      try {
+        const items = await getOrderItems(orderId);
+        setOrderItems(items);
+      } catch (error: any) {
+        navigate("/select-table", { replace: true });
+        toast.error(error.message);
+      }
+    };
+    fetchOrderItems();
   }, [orderId]);
 
   return (
@@ -47,6 +54,11 @@ const OrderCompletePage = () => {
           <Text fontSize="lg" textAlign="center" mb={4}>
             注文番号：#{orderId}
           </Text>
+          {tableNumber && (
+            <Text fontSize="sm" color="gray.500" textAlign="center" mb={4}>
+              テーブル番号：{tableNumber}
+            </Text>
+          )}
           <Stack spacing={2}>
             {orderItems.map((item) => (
               <Flex key={item.id} justify="space-between">
@@ -70,8 +82,14 @@ const OrderCompletePage = () => {
             </Flex>
           </Stack>
           <Flex mt={6} justify="center">
-            <Button colorScheme="blue" onClick={() => navigate("/")}>
-              Home へ戻る
+            <Button
+              colorScheme="blue"
+              onClick={() => {
+                if (!tableNumber) return;
+                navigate(`/?table=${tableNumber}`, { replace: true });
+              }}
+            >
+              追加注文する
             </Button>
           </Flex>
         </Box>

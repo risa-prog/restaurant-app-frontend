@@ -12,6 +12,7 @@ import { useAuth } from './context/AuthContext';
 import RegisterPage from './pages/auth/RegisterPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ProtectedRoute from './components/routing/ProtectedRoute';
+import SelectTablePage from './pages/customer/SelectTablePage';
 
 function App() {
   const { isLoggedIn } = useAuth();
@@ -20,6 +21,8 @@ function App() {
     <>
       <Toaster position="top-right" />
       <Routes>
+
+        <Route path="/select-table" element={<SelectTablePage />} />
         <Route path="/" element={<HomePage />} />
         <Route
           path="/order-complete/:orderId"
