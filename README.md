@@ -1,73 +1,58 @@
-# React + TypeScript + Vite
+# フロントエンド（React） - 飲食店注文アプリ
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React と TypeScript で実装されたフロントエンド部分です。  
+来店客向けの注文画面や管理画面の操作を提供します。
 
-Currently, two official plugins are available:
+## 前提条件
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Node.js >= 18
+- npm
+- バックエンド API が起動していること
 
-## React Compiler
+## 環境構築
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. リポジトリをクローン
 
-## Expanding the ESLint configuration
+   ```bash
+   git clone https://github.com/risa-prog/restaurant-app-frontend.git
+   cd restaurant-app-frontend
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+   ```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+2. 依存パッケージをインストール
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+   ```bash
+   npm install
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+   ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+3. 開発サーバーを起動
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+   ```bash
+   npm run dev
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+   ```
+
+4. ブラウザで http://localhost:5173 にアクセス
+
+## 主な機能
+
+- 来店客向け注文画面 : メニュー選択・注文機能、カート機能
+- 管理者向け管理画面 : 注文状況の確認、メニューの作成・編集
+  
+## 技術スタック
+
+- React
+- TypeScript
+- Chakra UI
+- React Router
+- Vite
+
+## フロントエンド / ローカルでのアクセス URL
+
+| 画面                 | パス          | 説明                         |
+| -------------------- | ------------- | ---------------------------- |
+| ホーム画面（来店客） | /             | メニュー一覧・注文画面       |
+| 会員登録             | /register     | 新規ユーザー登録画面(管理者) |
+| 管理者 注文一覧      | /admin/orders | 管理者向け注文管理ページ     |
+| 管理者 メニュー一覧  | /admin/menus  | メニュー管理                 |
